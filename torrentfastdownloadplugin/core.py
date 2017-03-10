@@ -37,12 +37,18 @@
 #    statement from all source files in the program, then also delete it here.
 #
 
+import json
+import time
+import requests
+import os
+import base64
 from deluge.log import LOG as log
 from deluge.plugins.pluginbase import CorePluginBase
 import deluge.component as component
 import deluge.configmanager
 from deluge.core.rpcserver import export
-import json
+
+
 
 
 DEFAULT_PREFS = {
@@ -61,8 +67,33 @@ class Core(CorePluginBase):
         log.info("Downloader Refresh...")
         # Refresh torrents.
         downloading_list = component.get("Core").get_torrents_status({},{})
-        log.info(json.dumps(downloading_list))
-        
+        # Foreach processing status.
+        for key in downloading_list:
+            torrent_info = downloading_list[key]
+            torrent_key = key
+            torrent_hash = torrent_info["hash"]
+            dest_path = torrent_info["move_completed_path"]
+            progress = torrent_info["progress"]
+            state = torrent_info["state"]
+            download_speed = torrent_info["download_payload_rate"]
+            # update path...
+
+        # get torrent wait..
+        # torrent http://qietv-play.wcs.8686c.com/torrent/debian-8.7.1-amd64-netinst.iso.torrent
+        down_url = "http://qietv-play.wcs.8686c.com/json/list.json?ts=" + time.time()
+        r = requests.get(down_url)
+        if(r.status_code == 200):
+            res = r.json()
+            if(res["success"] == True):
+                torrents = res["data"]
+                for torrent in torrents:
+                    rt = requests.get(torrent["url"])
+                    if(rt.status_code == 200):
+                        fname = os.path.basename(torrent["url"])
+                        b64 = base64.encodestring(rt.content)
+                        add_torrent_id = component.get("Core").add_torrent_file(fname,b64,{})
+                        log.info(add_torrent_id)
+
         pass
 
     @export
