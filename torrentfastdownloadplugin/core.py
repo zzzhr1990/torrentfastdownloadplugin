@@ -79,6 +79,7 @@ class Core(CorePluginBase):
             # update path...
 
         # get torrent wait..
+        log.info("update torrents status success")
         # torrent http://qietv-play.wcs.8686c.com/torrent/debian-8.7.1-amd64-netinst.iso.torrent
         down_url = "http://qietv-play.wcs.8686c.com/json/list.json?ts=" + time.time()
         r = requests.get(down_url)
