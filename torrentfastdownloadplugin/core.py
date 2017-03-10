@@ -58,8 +58,10 @@ DEFAULT_PREFS = {
 
 class Core(CorePluginBase):
     def enable(self):
+        log.info("Cluster download enabled...")
 #        self.config = deluge.configmanager.ConfigManager("torrentfastdownloadplugin.conf", DEFAULT_PREFS)
-        self.config = {}
+        #self.config = {}
+        pass
 
     def disable(self):
         pass
@@ -102,11 +104,15 @@ class Core(CorePluginBase):
     @export
     def set_config(self, config):
         """Sets the config dictionary"""
-        for key in config.keys():
-            self.config[key] = config[key]
-        self.config.save()
+        pass
+ #       for key in config.keys():
+ #           self.config[key] = config[key]
+ #       self.config.save()
+
+
 
     @export
     def get_config(self):
         """Returns the config dictionary"""
-        return self.config.config
+        return {}
+ #       return self.config.config
