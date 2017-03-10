@@ -42,6 +42,8 @@ from deluge.plugins.pluginbase import CorePluginBase
 import deluge.component as component
 import deluge.configmanager
 from deluge.core.rpcserver import export
+import json
+
 
 DEFAULT_PREFS = {
     "test":"NiNiNi"
@@ -57,6 +59,9 @@ class Core(CorePluginBase):
 
     def update(self):
         log.info("Downloader Refresh...")
+        # Refresh torrents.
+        downloading_list = component.get("Core").get_torrents_status({},{})
+        log.info(json.dumps(downloading_list))
         
         pass
 
