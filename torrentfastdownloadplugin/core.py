@@ -98,7 +98,7 @@ class Core(CorePluginBase):
                             add_torrent_id = component.get("Core").add_torrent_file(fname,b64,{})
                             log.info(add_torrent_id)
         except Exception as error:
-            log.exception(error)
+            log.warn("error occored")
         pass
 
     @export
