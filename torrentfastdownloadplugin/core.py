@@ -43,6 +43,7 @@ import requests
 import os
 import base64
 import traceback
+from deluge.error import AddTorrentError, InvalidTorrentError
 from deluge.log import LOG as log
 from deluge.plugins.pluginbase import CorePluginBase
 import deluge.component as component
