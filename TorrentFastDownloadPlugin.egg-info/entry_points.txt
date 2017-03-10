@@ -1,0 +1,8 @@
+
+    [deluge.plugin.core]
+    TorrentFastDownloadPlugin = torrentfastdownloadplugin:CorePlugin
+    [deluge.plugin.gtkui]
+    TorrentFastDownloadPlugin = torrentfastdownloadplugin:GtkUIPlugin
+    [deluge.plugin.web]
+    TorrentFastDownloadPlugin = torrentfastdownloadplugin:WebUIPlugin
+    

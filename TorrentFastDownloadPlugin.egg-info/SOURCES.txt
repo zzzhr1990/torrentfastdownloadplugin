@@ -1,0 +1,13 @@
+setup.py
+TorrentFastDownloadPlugin.egg-info/PKG-INFO
+TorrentFastDownloadPlugin.egg-info/SOURCES.txt
+TorrentFastDownloadPlugin.egg-info/dependency_links.txt
+TorrentFastDownloadPlugin.egg-info/entry_points.txt
+TorrentFastDownloadPlugin.egg-info/top_level.txt
+torrentfastdownloadplugin/__init__.py
+torrentfastdownloadplugin/common.py
+torrentfastdownloadplugin/core.py
+torrentfastdownloadplugin/gtkui.py
+torrentfastdownloadplugin/webui.py
+torrentfastdownloadplugin/data/config.glade
+torrentfastdownloadplugin/data/torrentfastdownloadplugin.js
