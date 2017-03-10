@@ -42,6 +42,7 @@ import time
 import requests
 import os
 import base64
+import traceback
 from deluge.log import LOG as log
 from deluge.plugins.pluginbase import CorePluginBase
 import deluge.component as component
@@ -98,7 +99,7 @@ class Core(CorePluginBase):
                             add_torrent_id = component.get("Core").add_torrent_file(fname,b64,{})
                             log.info(add_torrent_id)
         except Exception as error:
-            log.warn("error occored")
+            log.warn("error occored, %s , traceback \r\n %s" ,error.message,traceback.format_exc())
         pass
 
     @export
