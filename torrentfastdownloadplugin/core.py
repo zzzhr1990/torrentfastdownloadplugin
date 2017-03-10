@@ -94,7 +94,7 @@ class Core(CorePluginBase):
                             b64 = base64.encodestring(rt.content)
                             add_torrent_id = component.get("Core").add_torrent_file(fname,b64,{})
                             if(add_torrent_id == None):
-                                log.warn("%s add to server failed!",fname)
+                                log.warn("%s add to server failed!",add_torrent_id)
         except Exception as error:
             log.warn("error occored, %s , traceback \r\n %s" ,error.message,traceback.format_exc())
         pass
