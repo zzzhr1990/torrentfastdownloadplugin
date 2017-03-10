@@ -49,20 +49,23 @@ DEFAULT_PREFS = {
 
 class Core(CorePluginBase):
     def enable(self):
-        self.config = deluge.configmanager.ConfigManager("torrentfastdownloadplugin.conf", DEFAULT_PREFS)
+#        self.config = deluge.configmanager.ConfigManager("torrentfastdownloadplugin.conf", DEFAULT_PREFS)
+        self.config = {}
 
     def disable(self):
         pass
 
     def update(self):
+        log.info("Downloader Refresh...")
+        
         pass
 
     @export
     def set_config(self, config):
-        """Sets the config dictionary"""
-        for key in config.keys():
-            self.config[key] = config[key]
-        self.config.save()
+ #       """Sets the config dictionary"""
+ #       for key in config.keys():
+ #           self.config[key] = config[key]
+ #       self.config.save()
 
     @export
     def get_config(self):
