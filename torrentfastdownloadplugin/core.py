@@ -65,7 +65,6 @@ class Core(CorePluginBase):
         pass
 
     def update(self):
-        log.info("Downloader Refresh...")
         # Refresh torrents.
         downloading_list = component.get("Core").get_torrents_status({},{})
         # Foreach processing status.
@@ -81,12 +80,9 @@ class Core(CorePluginBase):
 
         # get torrent wait..
         try:
-            log.info("update torrents status success")
         # torrent http://qietv-play.wcs.8686c.com/torrent/debian-8.7.1-amd64-netinst.iso.torrent
             down_url = "http://qietv-play.wcs.8686c.com/json/list.json?ts=" + str(time.time())
-            log.info("downloading torrent %s",down_url)
             r = requests.get(down_url)
-            log.info("downloaded torrent %s",down_url)
             if(r.status_code == 200):
                 res = r.json()
                 if(res["success"] == True):
@@ -97,7 +93,8 @@ class Core(CorePluginBase):
                             fname = os.path.basename(torrent["url"])
                             b64 = base64.encodestring(rt.content)
                             add_torrent_id = component.get("Core").add_torrent_file(fname,b64,{})
-                            log.info(add_torrent_id)
+                            if(add_torrent_id == None):
+                                log.warn("%s add to server failed!",fname)
         except Exception as error:
             log.warn("error occored, %s , traceback \r\n %s" ,error.message,traceback.format_exc())
         pass
