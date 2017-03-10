@@ -79,24 +79,26 @@ class Core(CorePluginBase):
             # update path...
 
         # get torrent wait..
-        log.info("update torrents status success")
+        try:
+            log.info("update torrents status success")
         # torrent http://qietv-play.wcs.8686c.com/torrent/debian-8.7.1-amd64-netinst.iso.torrent
-        down_url = "http://qietv-play.wcs.8686c.com/json/list.json?ts=2345"
-        log.info("downloading torrent %s",down_url)
-        r = requests.get(down_url)
-        log.info("downloaded torrent %s",down_url)
-        if(r.status_code == 200):
-            res = r.json()
-            if(res["success"] == True):
-                torrents = res["data"]
-                for torrent in torrents:
-                    rt = requests.get(torrent["url"])
-                    if(rt.status_code == 200):
-                        fname = os.path.basename(torrent["url"])
-                        b64 = base64.encodestring(rt.content)
-                        add_torrent_id = component.get("Core").add_torrent_file(fname,b64,{})
-                        log.info(add_torrent_id)
-
+            down_url = "http://qietv-play.wcs.8686c.com/json/list.json?ts=" + time.time()
+            log.info("downloading torrent %s",down_url)
+            r = requests.get(down_url)
+            log.info("downloaded torrent %s",down_url)
+            if(r.status_code == 200):
+                res = r.json()
+                if(res["success"] == True):
+                    torrents = res["data"]
+                    for torrent in torrents:
+                        rt = requests.get(torrent["url"])
+                        if(rt.status_code == 200):
+                            fname = os.path.basename(torrent["url"])
+                            b64 = base64.encodestring(rt.content)
+                            add_torrent_id = component.get("Core").add_torrent_file(fname,b64,{})
+                            log.info(add_torrent_id)
+        except Exception as error:
+            log.exception(error)
         pass
 
     @export
