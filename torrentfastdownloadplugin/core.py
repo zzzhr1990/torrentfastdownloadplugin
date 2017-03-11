@@ -90,9 +90,9 @@ class Core(CorePluginBase):
             progress = torrent_info["progress"]
             state = torrent_info["state"]
  #           download_speed = torrent_info["download_payload_rate"]
-            log.info("----------JSON-------------")
-            log.info(json.dumps(downloading_list))
-            log.info("----------====-------------")
+        log.info("----------JSON-------------")
+        log.info(json.dumps(downloading_list))
+        log.info("----------====-------------")
 
     def update_stats(self):
         # Refresh torrents.
