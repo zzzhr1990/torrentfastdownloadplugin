@@ -63,11 +63,11 @@ class Core(CorePluginBase):
     def __init__(self, plugin_name):
         self.config = {}
         self.processing = False
-        log.info("%s plugin enabled...",plugin_name)
-        
+        log.info("%s plugin enabled...", plugin_name)
+
     def enable(self):
         log.info("Cluster download plugin enabled...")
-        #self.config = deluge.configmanager.ConfigManager("torrentfastdownloadplugin.conf", DEFAULT_PREFS)
+        self.config = deluge.configmanager.ConfigManager("torrentfastdownloadplugin.conf", DEFAULT_PREFS)
         #self.config = {}
         self.update_stats()
         self.update_timer = LoopingCall(self.update_stats)
@@ -80,14 +80,8 @@ class Core(CorePluginBase):
         except AssertionError:
             pass
 
-    def update_stats(self):
-        # Refresh torrents.
-        if self.processing:
-            return
-        self.processing = True
-        log.info("Refreshing")
+    def process_torrents(self):
         downloading_list = component.get("Core").get_torrents_status({}, {})
-        # Foreach processing status.
         for key in downloading_list:
             torrent_info = downloading_list[key]
             torrent_key = key
@@ -95,12 +89,25 @@ class Core(CorePluginBase):
             dest_path = torrent_info["move_completed_path"]
             progress = torrent_info["progress"]
             state = torrent_info["state"]
-            download_speed = torrent_info["download_payload_rate"]
+ #           download_speed = torrent_info["download_payload_rate"]
+            log.info("----------JSON-------------")
+            log.info(json.dumps(downloading_list))
+            log.info("----------====-------------")
+
+    def update_stats(self):
+        # Refresh torrents.
+        if self.processing:
+            return
+        self.processing = True
+        
+        # Foreach processing status.
+        
             # update path...
 
         # get torrent wait..
         try:
         # torrent http://qietv-play.wcs.8686c.com/torrent/debian-8.7.1-amd64-netinst.iso.torrent
+            process_torrents()
             down_url = "http://qietv-play.wcs.8686c.com/json/list.json?ts=" + str(time.time())
             req = requests.get(down_url)
             if req.status_code == 200:
