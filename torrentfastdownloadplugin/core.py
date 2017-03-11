@@ -42,6 +42,7 @@ import time
 import requests
 import os
 import base64
+from wcssliceupload import WcsSliceUpload
 import traceback
 from twisted.internet.task import LoopingCall
 from deluge.error import InvalidTorrentError
@@ -51,7 +52,6 @@ import deluge.component as component
 import deluge.configmanager
 from deluge.core.rpcserver import export
 from wcs.commons.auth import Auth
-from wcs.services.sliceupload import SliceUpload
 from wcs.services.uploadprogressrecorder import UploadProgressRecorder
 from wcs.commons.util import etag
 
@@ -127,7 +127,8 @@ class Core(CorePluginBase):
         param = {'position':'local', 'message':'upload'}
         upload_progress_recorder = UploadProgressRecorder()
         modify_time = time.time()
-        sliceupload = SliceUpload(token, file_path, file_key, param, upload_progress_recorder, modify_time)
+
+        sliceupload = WcsSliceUpload(token, file_path, file_key, param, upload_progress_recorder, modify_time)
         code, hashvalue = sliceupload.slice_upload()
         log.info("upload %d, %s",code,json.dumps(hashvalue))
 
