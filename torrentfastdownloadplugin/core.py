@@ -100,6 +100,8 @@ class Core(CorePluginBase):
                 file_progress = torrent_info["file_progress"][index]
                 if file_progress == 1:
                     file_path = dest_path + u"/" + file_detail["path"]
+                    log.info(type(dest_path))
+                    log.info(type(file_detail["path"]))
                     if os.path.exists(file_path):
                         a_size = os.path.getsize(file_path)
                         if a_size == file_detail["size"]:
