@@ -56,7 +56,7 @@ from deluge.core.rpcserver import export
 
 DEFAULT_PREFS = {
     "test":"NiNiNi",
-    'update_interval': 1,  # 2 seconds.
+    'update_interval': 2,  # 2 seconds.
 }
 
 class Core(CorePluginBase):
@@ -99,9 +99,7 @@ class Core(CorePluginBase):
             for index, file_detail in enumerate(torrent_info["files"]):
                 file_progress = torrent_info["file_progress"][index]
                 if file_progress == 1:
-                    file_path = dest_path + u"/" + file_detail["path"]
-                    log.info(type(dest_path))
-                    log.info(type(file_detail["path"]))
+                    file_path = ''.join([dest_path , u"/" , file_detail["path"]])
                     if os.path.exists(file_path):
                         a_size = os.path.getsize(file_path)
                         if a_size == file_detail["size"]:
@@ -110,9 +108,6 @@ class Core(CorePluginBase):
                             log.warn("file %s size not equal %ld (need %ld)...", file_path, a_size, file_detail["size"])
                     else:
                         log.warn("file %s download complete, but cannot be found...", file_path)
-                # update progress?
- #           state = torrent_info["state"]
- #           download_speed = torrent_info["download_payload_rate"]
 
     def update_stats(self):
         # Refresh torrents.
@@ -121,36 +116,11 @@ class Core(CorePluginBase):
         if self.processing:
             return
         self.processing = True
-        
-        # Foreach processing status.
-        
-            # update path...
-
-        # get torrent wait..
         try:
-        # torrent http://qietv-play.wcs.8686c.com/torrent/debian-8.7.1-amd64-netinst.iso.torrent
             self.process_torrents()
-            down_url = "http://qietv-play.wcs.8686c.com/json/list.json?ts=" + str(time.time())
-            req = requests.get(down_url)
-            if req.status_code == 200:
-                res = req.json()
-                if res["success"]:
-                    torrents = res["data"]
-                    for torrent in torrents:
-                        torrent_file = requests.get(torrent["url"])
-                        if torrent_file.status_code == 200:
-                            fname = os.path.basename(torrent["url"])
-                            b64 = base64.encodestring(torrent_file.content)
-                            try:
-                                add_torrent_id = component.get("Core").add_torrent_file(fname, b64, {})
-                                if add_torrent_id is not None:
-                                    log.info("%s add to server success!, torrent id : %s.", fname, add_torrent_id)
-                            except InvalidTorrentError:
-                                log.warn("%s add to server failed!, InvalidTorrentError occored.", fname)
- #                           if add_torrent_id is None:
                                 
         except Exception as error:
-            log.warn("error occored, %s , traceback \r\n %s" , error.message,traceback.format_exc())
+            log.warn("error , %s , traceback \r\n %s" , error.message,traceback.format_exc())
         finally:
             self.processing = False
 
