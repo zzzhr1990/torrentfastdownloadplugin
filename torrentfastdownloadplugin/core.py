@@ -44,7 +44,7 @@ import os
 import base64
 import traceback
 from twisted.internet.task import LoopingCall
-from deluge.error import AddTorrentError, InvalidTorrentError
+from deluge.error import InvalidTorrentError
 from deluge.log import LOG as log
 from deluge.plugins.pluginbase import CorePluginBase
 import deluge.component as component
