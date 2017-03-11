@@ -122,7 +122,7 @@ class WcsSliceUpload(object):
         self.logger.info('File %s slice upload start!', self.filepath)
         records = self.recovery_from_record()
         offsets, uploadBatch = self.records_parse(records)
-        self.logger.info('Recovery from upload record:offset %s, upload %s', offsets, uploadBatch)
+        #self.logger.info('Recovery from upload record:offset %s, upload %s', offsets, uploadBatch)
         if len(offsets) != 0:
             self.logger.info('Thare are %d offsets need to upload', len(offsets))
             if uploadBatch == 'Null':
@@ -191,6 +191,7 @@ class WcsSliceUpload(object):
         blkcode, blktext = _post(url=url, headers=headers, data=bput)
         while blkretry and self.need_retry(blkcode):
             blkcode, blktext = _post(url=url, headers=headers, data=bput)
+            self.logger.info('Read from %s , %d , %s ', url, blkcode, blktext)
             blkretry = blkretry - 1
         if self.need_retry(blkcode) or blkcode != 200:
             openfile.close()
