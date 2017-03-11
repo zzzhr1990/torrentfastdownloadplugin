@@ -219,7 +219,7 @@ class WcsSliceUpload(object):
         bputnum = 1
         offset_next = offset + _BPUT_SIZE
         bput_next = readfile(inputfile, offset_next, _BPUT_SIZE)
-
+        self.logger.info(bput_next)
         bputretry = bput_retries
         self.logger.info("bput_monext %d, _BLOCK_SIZE %ld, _BPUT_SIZE %ld", bput_next,_BLOCK_SIZE,_BPUT_SIZE)
         while bput_next is not None and bputnum < _BLOCK_SIZE/_BPUT_SIZE:
