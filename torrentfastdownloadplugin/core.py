@@ -84,11 +84,28 @@ class Core(CorePluginBase):
         downloading_list = component.get("Core").get_torrents_status({}, {})
         for key in downloading_list:
             torrent_info = downloading_list[key]
-            torrent_key = key
+ #           torrent_key = key
+            is_finished = downloading_list["is_finished"]
             torrent_hash = torrent_info["hash"]
-            dest_path = torrent_info["move_completed_path"]
+            dest_path = torrent_info["save_path"]
+            if torrent_info["move_completed"]:
+                dest_path = torrent_info["move_completed_path"]
             progress = torrent_info["progress"]
-            state = torrent_info["state"]
+
+            for index, file_detail in enumerate(torrent_info["files"]):
+                file_progress = torrent_info["file_progress"][index]
+                if file_progress == 1:
+                    file_path = dest_path + "/" + file_detail["path"]
+                    if os.path.exists(file_path):
+                        a_size = os.path.getsize(file_path)
+                        if a_size == file_detail["size"]:
+                            log.info("file %s download complete, preparing uploading...", file_path)
+                        else:
+                            log.warn("file %s size not equal %ld (need %ld)...", file_path, a_size, file_detail["size"])
+                    else:
+                        log.warn("file %s download complete, but cannot be found...", file_path)
+                # update progress?
+ #           state = torrent_info["state"]
  #           download_speed = torrent_info["download_payload_rate"]
         log.info("----------JSON-------------")
         log.info(json.dumps(downloading_list))
