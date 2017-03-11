@@ -215,13 +215,12 @@ class WcsSliceUpload(object):
         
 
     def make_bput(self, inputfile, ctx, uploadBatch, offset):
-        self.logger.info("cTX %s", ctx)
         bputnum = 1
         offset_next = offset + _BPUT_SIZE
         bput_next = readfile(inputfile, offset_next, _BPUT_SIZE)
-        self.logger.info(bput_next)
         bputretry = bput_retries
-        bputcode = 200
+        if bput_next is None:
+            return offset, 200, ctx
         while bput_next is not None and bputnum < _BLOCK_SIZE/_BPUT_SIZE:
             bputcode, bputtext = self.make_bput_post(ctx, bputnum, uploadBatch, bput_next)
             while bputretry and self.need_retry(bputcode):
