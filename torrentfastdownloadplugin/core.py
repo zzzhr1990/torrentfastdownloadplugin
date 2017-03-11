@@ -122,7 +122,7 @@ class Core(CorePluginBase):
         auth = Auth(access_key, secret_key)
         file_key = etag(file_path)
         log.info("calc etag %s", file_key)
-        putpolicy = {'scope':'other-storage:raw/' + file_key,'deadline':str(long(time.time()) * 1000 + 300000L)}
+        putpolicy = {'scope':'other-storage:raw/' + file_key,'deadline':str(long(time.time()) * 1000 + 86400000L)}
         token = auth.uploadtoken(putpolicy)
         param = {'position':'local', 'message':'upload'}
         upload_progress_recorder = UploadProgressRecorder()
