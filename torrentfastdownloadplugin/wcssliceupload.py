@@ -26,7 +26,8 @@ from wcs.commons.util import get_logger
 from wcs.commons.util import readfile
 from wcs.commons.util import file_to_stream
 from wcs.commons.util import GetUuid
-from uploadprogressrecorder import UploadProgressRecorder
+from wcs.services.uploadprogressrecorder import UploadProgressRecorder
+
 
 #record_lock = multiprocessing.Lock()
 record_lock = threading.Lock()
