@@ -60,9 +60,11 @@ DEFAULT_PREFS = {
 }
 
 class Core(CorePluginBase):
-    def __init__(self):
+    def __init__(self, plugin_name):
         self.config = {}
         self.processing = False
+        log.info("%s plugin enabled...",plugin_name)
+        
     def enable(self):
         log.info("Cluster download plugin enabled...")
         #self.config = deluge.configmanager.ConfigManager("torrentfastdownloadplugin.conf", DEFAULT_PREFS)
