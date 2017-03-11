@@ -51,8 +51,13 @@ class WcsSliceUpload(object):
         self.logger = get_logger(logging_folder, 'wcssliceupload')
         self.uploadBatch = ''
         self.progress = 0
+        self.shutdown = False
         self.PUT_URL = "http://qietv.up21.v1.wcsapi.com"
 
+    def disable(self):
+        self.shutdown = True
+    def enable(self):
+        self.shutdown = False
     def need_retry(self,code):
         if code == -1:
             return True
@@ -144,10 +149,15 @@ class WcsSliceUpload(object):
             self.uploadBatch = uploadBatch
             
             self.logger.info('Now start upload file blocks')
-            pool = ThreadPool(Thread_num)
-            pool.map(self.make_block, offsets)
-            pool.close()
-            pool.join()
+            for offset in offsets:
+                if self.shutdown:
+                    return -1, "slice upload fail- shutdown" 
+                self.make_block(offset)
+#            pool = ThreadPool(Thread_num)
+#            pool.map(self.make_block, offsets)
+
+#            pool.close()
+#            pool.join()
          
         else:
             self.logger.info('Do not need to upload, all file blocks have been uplaod')
@@ -189,10 +199,12 @@ class WcsSliceUpload(object):
         url = self.mlkblock_url(offset)
         headers = self.block_headers(self.uploadBatch)
         blkretry = mkblk_retries
+        self.logger.info(": posting ....")
         blkcode, blktext = _post(url=url, headers=headers, data=bput)
         while blkretry and self.need_retry(blkcode):
+            self.logger.info(": posting ....")
             blkcode, blktext = _post(url=url, headers=headers, data=bput)
-            self.logger.info('Read from %s , %d , %s ', url, blkcode, blktext)
+            self.logger.info('AA jjjjjjjjj ;;;;;; Read from %s , %d , %s ', url, blkcode, blktext)
             blkretry = blkretry - 1
         if self.need_retry(blkcode) or blkcode != 200:
             openfile.close()
