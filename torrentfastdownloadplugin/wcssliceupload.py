@@ -51,6 +51,7 @@ class WcsSliceUpload(object):
         self.logger = get_logger(logging_folder, 'wcssliceupload')
         self.uploadBatch = ''
         self.progress = 0
+        self.PUT_URL = "http://qietv.up21.v1.wcsapi.com"
 
     def need_retry(self,code):
         if code == -1:
@@ -154,7 +155,7 @@ class WcsSliceUpload(object):
         results = self.recovery_from_record()
         if self.iscomplet(results):
             self.logger.info('Now all blocks have upload suc.')
-            return self.make_file(PUT_URL, self.blockStatus(results), uploadBatch)
+            return self.make_file(self.PUT_URL, self.blockStatus(results), uploadBatch)
         else:
             fail_list = self.result_analysis(results)
             self.logger.info('Sorry, These block %s upload fail',fail_list )
@@ -166,7 +167,7 @@ class WcsSliceUpload(object):
         return _post(url=url, headers=headers, data=bput_next)
         
     def bput_url(self, ctx, offset):
-        return '{0}/bput/{1}/{2}'.format(PUT_URL, ctx, offset)
+        return '{0}/bput/{1}/{2}'.format(self.PUT_URL, ctx, offset)
     
     def bput_headers(self, uploadBatch):
         headers = {'Authorization':self.uploadtoken }
@@ -222,7 +223,7 @@ class WcsSliceUpload(object):
         return offset, bputcode, bputtext['ctx']
       
     def block_url(self, size, blocknum):
-        return '{0}/mkblk/{1}/{2}'.format(PUT_URL, size, blocknum)
+        return '{0}/mkblk/{1}/{2}'.format(self.PUT_URL, size, blocknum)
 
     def block_headers(self,uploadBatch):
         headers = {'Authorization':self.uploadtoken}
