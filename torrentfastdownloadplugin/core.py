@@ -63,12 +63,12 @@ class Core(CorePluginBase):
     def __init__(self, plugin_name):
         self.config = {}
         self.processing = False
-        self.disable = False
+        self.disabled = False
         log.info("%s plugin enabled...", plugin_name)
 
     def enable(self):
         log.info("Cluster download plugin enabled...")
-        self.disable = False
+        self.disabled = False
         self.config = deluge.configmanager.ConfigManager("torrentfastdownloadplugin.conf", DEFAULT_PREFS)
         #self.config = {}
         self.update_stats()
@@ -77,7 +77,7 @@ class Core(CorePluginBase):
 
     def disable(self):
         log.info("Cluster download plugin disabled...")
-        self.disable = True
+        self.disabled = True
         try:
             self.update_timer.stop()
         except AssertionError:
@@ -111,7 +111,7 @@ class Core(CorePluginBase):
 
     def update_stats(self):
         # Refresh torrents.
-        if self.disable:
+        if self.disabled:
             return
         if self.processing:
             return
