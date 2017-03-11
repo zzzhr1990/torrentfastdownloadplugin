@@ -50,8 +50,10 @@ from deluge.plugins.pluginbase import CorePluginBase
 import deluge.component as component
 import deluge.configmanager
 from deluge.core.rpcserver import export
-
-
+from wcs.commons.auth import Auth
+from wcs.services.sliceupload import SliceUpload
+from wcs.services.uploadprogressrecorder import UploadProgressRecorder
+from wcs.commons.util import etag
 
 
 DEFAULT_PREFS = {
@@ -82,7 +84,6 @@ class Core(CorePluginBase):
             self.update_timer.stop()
         except AssertionError:
             log.warn("stop download plugin error")
-            pass
 
     def process_torrents(self):
         downloading_list = component.get("Core").get_torrents_status({}, {})
@@ -106,11 +107,18 @@ class Core(CorePluginBase):
                             a_size = os.path.getsize(file_path)
                             if a_size == file_detail["size"]:
                                 log.info("file %s download complete, preparing uploading...", file_path)
+                                # post to ws and change status to converting...
+                                self.upload_to_ws(file_path)
                             else:
                                 log.warn("file %s size not equal %ld (need %ld)...", file_path, a_size, file_detail["size"])
                         else:
                             log.warn("file %s download complete, but cannot be found...", file_path)
-
+    def upload_to_ws(self,file_path):
+        access_key = "0a3836b4ef298e7dc9fc5da291252fc4ac3e0c7f"
+        secret_key = "da17a6ffaeab4ca89ce7275d9a8060206cb3de8e"
+        file_key = etag(file_path)
+        log.info("calc etag %s",file_key)
+        putpolicy = {'scope':'other-storage:raw/' + file_key}
     def update_stats(self):
         # Refresh torrents.
         if self.disabled:
