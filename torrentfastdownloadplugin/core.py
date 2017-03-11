@@ -99,7 +99,7 @@ class Core(CorePluginBase):
             for index, file_detail in enumerate(torrent_info["files"]):
                 file_progress = torrent_info["file_progress"][index]
                 if file_progress == 1:
-                    file_path = (''.join([dest_path , u"/" , file_detail["path"]])).encode('utf8')
+                    file_path = (u'/'.join([dest_path, file_detail["path"]])).encode('utf8')
                     if os.path.exists(file_path):
                         a_size = os.path.getsize(file_path)
                         if a_size == file_detail["size"]:
