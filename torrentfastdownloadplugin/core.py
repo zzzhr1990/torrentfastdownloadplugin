@@ -85,7 +85,7 @@ class Core(CorePluginBase):
         for key in downloading_list:
             torrent_info = downloading_list[key]
  #           torrent_key = key
-            is_finished = downloading_list["is_finished"]
+            is_finished = torrent_info["is_finished"]
             torrent_hash = torrent_info["hash"]
             dest_path = torrent_info["save_path"]
             if torrent_info["move_completed"]:
