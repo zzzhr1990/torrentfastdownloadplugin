@@ -104,9 +104,14 @@ class Core(CorePluginBase):
                         if torrent_file.status_code == 200:
                             fname = os.path.basename(torrent["url"])
                             b64 = base64.encodestring(torrent_file.content)
-                            add_torrent_id = component.get("Core").add_torrent_file(fname, b64, {})
-                            if add_torrent_id is None:
-                                log.warn("%s add to server failed!", add_torrent_id)
+                            try:
+                                add_torrent_id = component.get("Core").add_torrent_file(fname, b64, {})
+                                if add_torrent_id is not None:
+                                    log.info("%s add to server success!, torrent id : %s.", fname, add_torrent_id)
+                            except InvalidTorrentError:
+                                log.warn("%s add to server failed!, InvalidTorrentError occored.", fname)
+ #                           if add_torrent_id is None:
+                                
         except Exception as error:
             log.warn("error occored, %s , traceback \r\n %s" , error.message,traceback.format_exc())
 
