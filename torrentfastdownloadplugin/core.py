@@ -107,7 +107,7 @@ class Core(CorePluginBase):
         # get torrent wait..
         try:
         # torrent http://qietv-play.wcs.8686c.com/torrent/debian-8.7.1-amd64-netinst.iso.torrent
-            process_torrents()
+            self.process_torrents()
             down_url = "http://qietv-play.wcs.8686c.com/json/list.json?ts=" + str(time.time())
             req = requests.get(down_url)
             if req.status_code == 200:
