@@ -98,16 +98,18 @@ class Core(CorePluginBase):
 
             for index, file_detail in enumerate(torrent_info["files"]):
                 file_progress = torrent_info["file_progress"][index]
-                if file_progress == 1:
-                    file_path = (u'/'.join([dest_path, file_detail["path"]])).encode('utf8')
-                    if os.path.exists(file_path):
-                        a_size = os.path.getsize(file_path)
-                        if a_size == file_detail["size"]:
-                            log.info("file %s download complete, preparing uploading...", file_path)
+                file_download = torrent_info["file_priorities"][index]
+                if file_download:
+                    if file_progress == 1:
+                        file_path = (u'/'.join([dest_path, file_detail["path"]])).encode('utf8')
+                        if os.path.exists(file_path):
+                            a_size = os.path.getsize(file_path)
+                            if a_size == file_detail["size"]:
+                                log.info("file %s download complete, preparing uploading...", file_path)
+                            else:
+                                log.warn("file %s size not equal %ld (need %ld)...", file_path, a_size, file_detail["size"])
                         else:
-                            log.warn("file %s size not equal %ld (need %ld)...", file_path, a_size, file_detail["size"])
-                    else:
-                        log.warn("file %s download complete, but cannot be found...", file_path)
+                            log.warn("file %s download complete, but cannot be found...", file_path)
 
     def update_stats(self):
         # Refresh torrents.
