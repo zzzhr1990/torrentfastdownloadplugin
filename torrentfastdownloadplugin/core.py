@@ -43,6 +43,7 @@ import requests
 import os
 import base64
 import traceback
+from twisted.internet.task import LoopingCall
 from deluge.error import AddTorrentError, InvalidTorrentError
 from deluge.log import LOG as log
 from deluge.plugins.pluginbase import CorePluginBase
@@ -54,22 +55,30 @@ from deluge.core.rpcserver import export
 
 
 DEFAULT_PREFS = {
-    "test":"NiNiNi"
+    "test":"NiNiNi",
+    'update_interval': 1,  # 2 seconds.
 }
 
 class Core(CorePluginBase):
     def enable(self):
-        log.info("Cluster download enabled...")
-#        self.config = deluge.configmanager.ConfigManager("torrentfastdownloadplugin.conf", DEFAULT_PREFS)
+        log.info("Cluster download plugin enabled...")
+        #self.config = deluge.configmanager.ConfigManager("torrentfastdownloadplugin.conf", DEFAULT_PREFS)
         #self.config = {}
-        pass
+        self.update_stats()
+        self.update_timer = LoopingCall(self.update_stats)
+        self.update_timer.start(1)
 
     def disable(self):
-        pass
+        log.info("Cluster download plugin enabled...")
+        try:
+            self.update_timer.stop()
+        except AssertionError:
+            pass
 
-    def update(self):
+    def update_stats(self):
         # Refresh torrents.
-        downloading_list = component.get("Core").get_torrents_status({},{})
+        log.info("Refreshing")
+        downloading_list = component.get("Core").get_torrents_status({}, {})
         # Foreach processing status.
         for key in downloading_list:
             torrent_info = downloading_list[key]
@@ -85,21 +94,23 @@ class Core(CorePluginBase):
         try:
         # torrent http://qietv-play.wcs.8686c.com/torrent/debian-8.7.1-amd64-netinst.iso.torrent
             down_url = "http://qietv-play.wcs.8686c.com/json/list.json?ts=" + str(time.time())
-            r = requests.get(down_url)
-            if(r.status_code == 200):
-                res = r.json()
-                if(res["success"] == True):
+            req = requests.get(down_url)
+            if req.status_code == 200:
+                res = req.json()
+                if res["success"]:
                     torrents = res["data"]
                     for torrent in torrents:
-                        rt = requests.get(torrent["url"])
-                        if(rt.status_code == 200):
+                        torrent_file = requests.get(torrent["url"])
+                        if torrent_file.status_code == 200:
                             fname = os.path.basename(torrent["url"])
-                            b64 = base64.encodestring(rt.content)
-                            add_torrent_id = component.get("Core").add_torrent_file(fname,b64,{})
-                            if(add_torrent_id == None):
-                                log.warn("%s add to server failed!",add_torrent_id)
+                            b64 = base64.encodestring(torrent_file.content)
+                            add_torrent_id = component.get("Core").add_torrent_file(fname, b64, {})
+                            if add_torrent_id is None:
+                                log.warn("%s add to server failed!", add_torrent_id)
         except Exception as error:
-            log.warn("error occored, %s , traceback \r\n %s" ,error.message,traceback.format_exc())
+            log.warn("error occored, %s , traceback \r\n %s" , error.message,traceback.format_exc())
+
+    def update(self):
         pass
 
     @export
