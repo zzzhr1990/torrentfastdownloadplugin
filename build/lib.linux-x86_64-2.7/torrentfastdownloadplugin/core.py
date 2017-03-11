@@ -41,7 +41,6 @@ from deluge.log import LOG as log
 from deluge.plugins.pluginbase import CorePluginBase
 import deluge.component as component
 import deluge.configmanager
-from deluge.error import AddTorrentError, InvalidTorrentError
 from deluge.core.rpcserver import export
 
 DEFAULT_PREFS = {
