@@ -201,6 +201,7 @@ class WcsSliceUpload(object):
         blkretry = mkblk_retries
         self.logger.info(": posting ....")
         blkcode, blktext = _post(url=url, headers=headers, data=bput)
+        self.logger.info("result %d",blkcode)
         while blkretry and self.need_retry(blkcode):
             self.logger.info(": re_posting ....")
             blkcode, blktext = _post(url=url, headers=headers, data=bput)
