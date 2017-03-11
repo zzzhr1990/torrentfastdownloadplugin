@@ -60,6 +60,9 @@ DEFAULT_PREFS = {
 }
 
 class Core(CorePluginBase):
+    def __init__(self):
+        self.config = {}
+        self.processing = False
     def enable(self):
         log.info("Cluster download plugin enabled...")
         #self.config = deluge.configmanager.ConfigManager("torrentfastdownloadplugin.conf", DEFAULT_PREFS)
@@ -77,6 +80,9 @@ class Core(CorePluginBase):
 
     def update_stats(self):
         # Refresh torrents.
+        if self.processing:
+            return
+        self.processing = True
         log.info("Refreshing")
         downloading_list = component.get("Core").get_torrents_status({}, {})
         # Foreach processing status.
@@ -114,6 +120,8 @@ class Core(CorePluginBase):
                                 
         except Exception as error:
             log.warn("error occored, %s , traceback \r\n %s" , error.message,traceback.format_exc())
+        finally:
+            self.processing = False
 
     def update(self):
         pass
