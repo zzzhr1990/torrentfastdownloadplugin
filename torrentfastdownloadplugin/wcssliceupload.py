@@ -221,7 +221,7 @@ class WcsSliceUpload(object):
         bput_next = readfile(inputfile, offset_next, _BPUT_SIZE)
 
         bputretry = bput_retries
-        self.logger.info("bput_monext %d, _BLOCK_SIZE %ld, _BPUT_SIZE %ld", _BPUT_SIZE)
+        self.logger.info("bput_monext %d, _BLOCK_SIZE %ld, _BPUT_SIZE %ld", bput_next,_BLOCK_SIZE,_BPUT_SIZE)
         while bput_next is not None and bputnum < _BLOCK_SIZE/_BPUT_SIZE:
             bputcode, bputtext = self.make_bput_post(ctx, bputnum, uploadBatch, bput_next)
             while bputretry and self.need_retry(bputcode):
