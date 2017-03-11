@@ -113,12 +113,24 @@ class Core(CorePluginBase):
                                 log.warn("file %s size not equal %ld (need %ld)...", file_path, a_size, file_detail["size"])
                         else:
                             log.warn("file %s download complete, but cannot be found...", file_path)
-    def upload_to_ws(self,file_path):
+
+    def upload_to_ws(self, file_path):
+        if self.disabled:
+            return
         access_key = "0a3836b4ef298e7dc9fc5da291252fc4ac3e0c7f"
         secret_key = "da17a6ffaeab4ca89ce7275d9a8060206cb3de8e"
+        auth = Auth(access_key, secret_key)
         file_key = etag(file_path)
-        log.info("calc etag %s",file_key)
+        log.info("calc etag %s", file_key)
         putpolicy = {'scope':'other-storage:raw/' + file_key}
+        token = auth.uploadtoken(putpolicy)
+        param = {'position':'local', 'message':'upload'}
+        upload_progress_recorder = UploadProgressRecorder()
+        modify_time = time.time()
+        sliceupload = SliceUpload(token, file_path, file_key, param, upload_progress_recorder, modify_time)
+        code, hashvalue = sliceupload.slice_upload()
+        log.info("upload %d, %s",code,json.dumps(hashvalue))
+
     def update_stats(self):
         # Refresh torrents.
         if self.disabled:
