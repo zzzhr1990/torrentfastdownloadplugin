@@ -27,6 +27,7 @@ from wcs.commons.util import readfile
 from wcs.commons.util import file_to_stream
 from wcs.commons.util import GetUuid
 from wcs.services.uploadprogressrecorder import UploadProgressRecorder
+from workconfig import WorkConfig
 
 
 #record_lock = multiprocessing.Lock()
@@ -51,14 +52,11 @@ class WcsSliceUpload(object):
         self.logger = get_logger(logging_folder, 'wcssliceupload')
         self.uploadBatch = ''
         self.progress = 0
-        self.shutdown = False
         self.PUT_URL = "http://qietv.up21.v1.wcsapi.com"
 
-    def disable(self):
-        self.shutdown = True
-    def enable(self):
-        self.shutdown = False
     def need_retry(self,code):
+        if WorkConfig.disable:
+            return False
         if code == -1:
             return True
         if (code // 100 == 5 and code != 579):
@@ -78,8 +76,7 @@ class WcsSliceUpload(object):
             else:
                 blocksize = self.size - (blockid * _BLOCK_SIZE)
             self.progress += float(blocksize)/float(self.size)
-            print 'current size: {0:d}, total upload progress: {1:.2f}%'.format(blocksize, self.progress * 100)
-    
+
     def recovery_from_record(self):
         record = self.upload_progress_recorder.get_upload_record(self.key)
         if not record:
@@ -150,7 +147,7 @@ class WcsSliceUpload(object):
             
             self.logger.info('Now start upload file blocks')
             for offset in offsets:
-                if self.shutdown:
+                if WorkConfig.disable:
                     return -1, "slice upload fail- shutdown" 
                 self.make_block(offset)
 #            pool = ThreadPool(Thread_num)
@@ -273,7 +270,7 @@ class WcsSliceUpload(object):
             retry -= 1
         if self.need_retry(code):
            self.logger.error('Sorry, the make_file error, code is %d, the reason is %s', code, text)
-           self.blockStatus = []
+#           self.blockStatus = []
            self.upload_progress_recorder.delete_upload_record(self.key)
         else:
            self.logger.info('Make_file suc! wcssliceupload complet!')

@@ -54,6 +54,7 @@ from deluge.core.rpcserver import export
 from wcs.commons.auth import Auth
 from wcs.services.uploadprogressrecorder import UploadProgressRecorder
 from wcs.commons.util import etag
+from workconfig import WorkConfig
 
 
 DEFAULT_PREFS = {
@@ -65,12 +66,12 @@ class Core(CorePluginBase):
     def __init__(self, plugin_name):
         self.config = {}
         self.processing = False
-        self.disabled = False
+        WorkConfig.disable = False
         log.info("%s plugin enabled...", plugin_name)
 
     def enable(self):
         log.info("Cluster download plugin enabled...")
-        self.disabled = False
+        WorkConfig.disable = False
         self.config = deluge.configmanager.ConfigManager("torrentfastdownloadplugin.conf", DEFAULT_PREFS)
         #self.config = {}
         self.update_stats()
@@ -79,7 +80,7 @@ class Core(CorePluginBase):
 
     def disable(self):
         log.info("Cluster download plugin disabled...")
-        self.disabled = True
+        WorkConfig.disable = True
         try:
             self.update_timer.stop()
         except AssertionError:
@@ -115,7 +116,7 @@ class Core(CorePluginBase):
                             log.warn("file %s download complete, but cannot be found...", file_path)
 
     def upload_to_ws(self, file_path):
-        if self.disabled:
+        if WorkConfig.disable:
             return
         access_key = "0a3836b4ef298e7dc9fc5da291252fc4ac3e0c7f"
         secret_key = "da17a6ffaeab4ca89ce7275d9a8060206cb3de8e"
@@ -134,7 +135,7 @@ class Core(CorePluginBase):
 
     def update_stats(self):
         # Refresh torrents.
-        if self.disabled:
+        if WorkConfig.disable:
             return
         if self.processing:
             return
